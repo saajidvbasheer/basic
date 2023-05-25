@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+var AWS = require("aws-sdk");
 
 const cors = require('cors');
 app.use(cors({
@@ -31,12 +32,12 @@ const credentials = {
     const timestamp =Date.now();
     const item = {
         "user_id" : { S: timestamp.toString()},
-        "name": { S: req.body.data.name},
-        "age": {S: req.body.data.age}
+        "Name": { S: req.body.data.name},
+        "rev_com": {S: req.body.data.age}
 
     };
     //define the table name and the PutItem command
-    const tableName = "Details";
+    const tableName = "Review";
     const putItemCommand = new PutItemCommand({ TableName:tableName, Item: item});
     //Call theDynamoDB API to add the item to the table
     async function addItem() {
@@ -53,3 +54,30 @@ const credentials = {
 app.listen(8080, () => {
         console.log('Server started on port 8080')
 })
+
+let awsConfig = {
+    "region": "ap-south-1",
+    "endpoint": "http://dynamodb.ap-south-1.amazonaws.com",
+    "accessKeyId": "AKIARPG5VRWC53MRXO6M", "secretAccessKey": "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"
+};
+AWS.config.update(awsConfig);
+let docClient = new AWS.DynamoDB.DocumentClient();
+let fetchOneByKey = function () {
+    var params = {
+        TableName: "Review",
+        Key: {
+            "user_id": 1
+        }
+    };
+    docClient.get(params, function (err, data) {
+        if (err) {
+            console.log("Review::fetchOneByKey::error - " + JSON.stringify(err, null, 2));
+        }
+        else {
+            console.log("Review::fetchOneByKey::success - " + JSON.stringify(data, null, 2));
+        }
+    })
+}
+
+
+fetchOneByKey();

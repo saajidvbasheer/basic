@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from 'axios';
 import './css/style.css';
+import {fetchData} from './AwsFunctions';
 
 class ReadForm extends Component{
     constructor(props) {
@@ -48,4 +49,16 @@ class ReadForm extends Component{
 
 }
 
+
+
+  const App = () => {
+  
+  const fetchDataFormDynamoDb = () => {
+    fetchData('users')
+  }
+  
+  return <>
+    <button onClick={() => fetchDataFormDynamoDb()}> Fetch </button>
+  </>
+}
 export default ReadForm;
